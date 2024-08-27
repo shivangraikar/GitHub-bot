@@ -18,12 +18,17 @@ This repository contains two Python scripts for automating the process of follow
    ```
    git clone https://github.com/shivangraikar/GitHub-bot.git
    cd your-repo-name
+   ```
+
 2. Install the dependencies:
    ```
    pip install requests
+   ```
+
 3. Run each file individually:
    ```
    python github-follow.py
    python github-unfollow.py
+   ```
 
 Make sure to replace `TOKENS` with the actual secret GitHub Tokens.
