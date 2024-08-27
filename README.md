@@ -16,7 +16,7 @@ This repository contains two Python scripts for automating the process of follow
 
 1. Clone this repository:
    ```
-   git clone [https://github.com/your-username/your-repo-name.git](https://github.com/shivangraikar/GitHub-bot.git)
+   git clone https://github.com/shivangraikar/GitHub-bot.git
    cd your-repo-name
 2. Install the dependencies:
    ```
