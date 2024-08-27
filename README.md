@@ -16,7 +16,7 @@ This repository contains two Python scripts for automating the process of follow
 
 1. Clone this repository:
    ```
-   git clone https://github.com/your-username/your-repo-name.git
+   git clone [https://github.com/your-username/your-repo-name.git](https://github.com/shivangraikar/GitHub-bot.git)
    cd your-repo-name
 2. Install the dependencies:
    ```
@@ -26,4 +26,4 @@ This repository contains two Python scripts for automating the process of follow
    python github-follow.py
    python github-unfollow.py
 
-Make sure to replace `"https://github.com/your-username/your-repo-name.git"` with the actual URL of your GitHub repository. This `README.md` provides a clear overview of the scripts, setup instructions, and usage guidelines.
+Make sure to replace `TOKENS` with the actual secret GitHub Tokens.
