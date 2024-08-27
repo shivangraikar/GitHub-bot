@@ -2,43 +2,56 @@
 """
 @author: Shivang
 """
-from random import randint
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from time import sleep, strftime
-import pandas as pd
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
+import requests
+import time
 
-chromedriver_path = "/Users/shivangraikar/Desktop/chromedriver"  #insert chromedriver path
-chrome_service = Service(chromedriver_path)
-webdriver = webdriver.Chrome(service=chrome_service)
-webdriver.get('https://buildertrend.net/')
+# Replace with your GitHub personal access token
+TOKEN = 'YOUR_GITHUB_TOKEN'
 
-# =============================================================================
-# Login
-# =============================================================================
+# GitHub API endpoint for following users
+API_URL = 'https://api.github.com/user/following'
+FOLLOWERS_URL = 'https://api.github.com/users/{username}/followers'
 
-username = webdriver.find_element(By.XPATH, '//*[@id="username"]')
-username.send_keys("deniz.tuncay@dnd-homes.com")  #specify username
-password = webdriver.find_element(By.XPATH, '//*[@id="password"]')
-password.send_keys("Deniz4141.")  #specify password
+# Set up the headers with the authorization token
+headers = {
+    'Authorization': f'token {TOKEN}',
+    'Accept': 'application/vnd.github.v3+json',
+}
 
-button_login = webdriver.find_element(By.XPATH, '//*[@id="reactLoginListDiv"]/div/div/div/div/div/div[3]/div/div/div/form/button')
-button_login.click()
+def get_followers(username):
+    """Fetch the list of followers of a specific user, handling pagination."""
+    followers = []
+    page = 1
+    while True:
+        response = requests.get(FOLLOWERS_URL.format(username=username) + f'?page={page}&per_page=100', headers=headers)
+        if response.status_code == 200:
+            users = response.json()
+            if not users:  # No more users
+                break
+            followers.extend(user['login'] for user in users)
+            page += 1
+            time.sleep(1)  # Avoid hitting rate limits
+        else:
+            print(f"Error fetching followers list: {response.status_code} - {response.text}")
+            break
+    return followers
 
-financial_button = webdriver.find_element(By.XPATH, '//*[@id="reactMainNavigation"]/div/div[1]/div/div[6]/button')
-financial_button.click()
+def follow_user(username):
+    """Follow a specific user by username."""
+    follow_url = f"https://api.github.com/user/following/{username}"
+    response = requests.put(follow_url, headers=headers)
+    if response.status_code == 204:
+        print(f"Successfully followed {username}")
+    else:
+        print(f"Error following {username}: {response.status_code} - {response.text}")
 
-cost_inbox = webdriver.find_element(By.XPATH, '//*[@id="reactMainNavigation"]/div/div[1]/div/div[6]/div/div/div/ul/li[7]/span/div/div/a/div/div/div[2]/div')
-cost_inbox.click()
+def follow_users_from_account(account_username, limit=500):
+    """Follow users from the followers list of a specific account."""
+    followers = get_followers(account_username)
+    for user in followers[:limit]:  # Only follow up to `limit` users
+        follow_user(user)
+        time.sleep(1)  # Avoid hitting rate limits
 
-upload_receipt = webdriver.find_element(By.XPATH, '//*[@id="reactReceiptsListDiv"]/div/div/div/section/div/div[1]/div/header/a/button/span')
-upload_receipt.click()
-
-browse_file = webdriver.find_element(By.XPATH, '//*[@id="ctl00_ctl00_bodyTagControl"]/div[14]/div/div[2]/div/div[2]/div/div/div[2]/form/main/div/div/div/div/div/span/div[1]/span/div/p[2]/a')
-browse_file.send_keys("C:\\Users\\YourName\\Desktop\\YourFile.txt")
-
-# =============================================================================
-# Navigate to your clickable buttons using each row information from the forms.csv
-# =============================================================================
+if __name__ == "__main__":
+    # Replace 'famous_account' with the username of the account whose followers you want to follow
+    follow_users_from_account('famous_account', limit=500)
